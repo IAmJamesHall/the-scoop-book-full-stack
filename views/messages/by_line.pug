@@ -1,0 +1,6 @@
+p.by-line
+  = message.author
+  |  | 
+  = message.publishedAt()
+  |  |
+  a(href="/messages/" + message.id + "/delete") DELETE

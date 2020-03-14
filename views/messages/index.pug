@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+  div.subheader
+    if fullName
+      h2 Welcome #{fullName} 
+    else
+      h2 Messages
+    if user.adminPermissions
+      a(href="/messages/new", class="btn-new") Create Message &#43;
+    include loginForm
+    
+    
+  each message in messages
+    if user.adminPermissions
+      article
+        p= message.content
+        include by_line
+    else
+      article
+        p= message.content
+        include by_line
