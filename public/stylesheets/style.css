@@ -853,8 +853,16 @@ label {
 
 input[type="text"], select, textarea {
   border: solid 2px #ddd; }
-  input[type="text"]:focus, select:focus, textarea:focus {
+input[type="text"]:focus, select:focus, textarea:focus {
     border: solid 2px #797A9E; }
+
+input[type="submit"] {
+  background-color: #941e33;
+}
+
+input[type="submit"]:hover {
+  background-color: #a93c4f;
+}
 
 select {
   text-transform: capitalize; }
