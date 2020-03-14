@@ -793,7 +793,7 @@ header {
   margin-bottom: 1.5em; }
 
 .subheader h2 {
-  color: #824670;
+  color: #560e1b;
   margin-bottom: 0; }
 
 .by-line {
@@ -801,13 +801,13 @@ header {
 
 .btn-new {
   color:white;
-  background-color: #824670;
+  background-color: #941e33;
   padding: 0.5em 1em;
   border-radius: 6px; }
 
 .btn-new:hover {
   color: white;
-  background-color: rgba(130, 70, 112, 0.9); }
+  background-color: #a93c4f; }
 
 .btn-login {
   color:white;

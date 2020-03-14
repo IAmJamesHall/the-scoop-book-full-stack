@@ -6,9 +6,10 @@ It is a Twitter-like feed of messages from the manager and department heads. Use
 This app also supports receiving messages from certain pre-approved phone numbers as SMS messages. These are mapped to a name in the database and published on the feed under that name.
 
 # TODO before beta launch
-- [ ] fix colors
-- [ ] publish to Github
-- [ ] add more obvious delete button
+- [x] fix colors
+- [x] publish to Github
+- [x] add more obvious delete button
+- [ ] add friendly 404
 
 
 # TODO sometime in future
