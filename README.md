@@ -9,7 +9,10 @@ This app also supports receiving messages from certain pre-approved phone number
 - [x] fix colors
 - [x] publish to Github
 - [x] add more obvious delete button
-- [ ] add friendly 404
+- [ ] add friendly 404, errors
+- [ ] add today indicator
+- [ ] add formatting support
+- [x] implement redirects when not logged in
 
 
 # TODO sometime in future

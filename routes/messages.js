@@ -15,6 +15,14 @@ function asyncHandler(cb) {
   }
 }
 
+/**
+ * 
+ * @param {object} req - HTTP request object
+ * @return {object} 
+ *       - username
+ *       - loggedIn
+*        -  adminPermission
+ */
 async function checkForLoggedInState(req) {
   const { username } = req.cookies;
   let user;
@@ -78,9 +86,9 @@ router.get('/', asyncHandler(async (req, res) => {
 
 /* Create a new message form. */
 router.get('/new', async (req, res) => {
-  const loggedIn = await checkForLoggedInState(req);
-  if (loggedIn) {
-    res.render("messages/new", { message: {}, title: "New Message", loggedIn });
+  const user = await checkForLoggedInState(req);
+  if (user.adminPermissions) {
+    res.render("messages/new", { message: {}, title: "New Message", loggedIn: user.loggedIn });
   } else {
     res.redirect('/messages');
   }
@@ -89,8 +97,8 @@ router.get('/new', async (req, res) => {
 
 /* POST create message. */
 router.post('/', asyncHandler(async (req, res) => {
-  const loggedIn = await checkForLoggedInState(req);
-  if (loggedIn) {
+  const user = await checkForLoggedInState(req);
+  if (user.adminPermissions) {
     let message;
     try {
       message = await Message.create(req.body);
@@ -106,7 +114,6 @@ router.post('/', asyncHandler(async (req, res) => {
   } else {
     res.redirect('/messages');
   }
-
 }));
 
 
@@ -147,45 +154,41 @@ router.post('/sms', asyncHandler( async (req, res) => {
       content,
       author
     });
-    res.send(`<h1>You POSTED!</h1>`)
-  }
-  
-
-  
-}));
-
-/* Edit message form. */
-router.get("/:id/edit", asyncHandler(async (req, res) => {
-  const loggedIn = await checkForLoggedInState(req);
-  if (loggedIn) {
-    const message = await Message.findByPk(req.params.id);
-    if (message) {
-      res.render("messages/edit", { message, title: "Edit message", loggedIn });
-    } else {
-      res.sendStatus(404);
-    }
-  } else {
-    res.redirect('/messages');
-  }
-
-
-}));
-
-/* GET individual message. */
-router.get("/:id", asyncHandler(async (req, res) => {
-  const loggedIn = await checkForLoggedInState(req);
-  const message = await Message.findByPk(req.params.id);
-  if (message) {
-    res.render("messages/show", { message, title: message.title, loggedIn});
-  } else {
-    res.sendStatus(404);
+    res.status(200).send('Message added to the database');
   }
 }));
+
+// /* Edit message form. */
+// router.get("/:id/edit", asyncHandler(async (req, res) => {
+//   const loggedIn = await checkForLoggedInState(req);
+//   if (loggedIn) {
+//     const message = await Message.findByPk(req.params.id);
+//     if (message) {
+//       res.render("messages/edit", { message, title: "Edit message", loggedIn });
+//     } else {
+//       res.sendStatus(404);
+//     }
+//   } else {
+//     res.redirect('/messages');
+//   }
+// }));
+
+
+// /* GET individual message. */
+// router.get("/:id", asyncHandler(async (req, res) => {
+//   const loggedIn = await checkForLoggedInState(req);
+//   const message = await Message.findByPk(req.params.id);
+//   if (message) {
+//     res.render("messages/show", { message, title: message.title, loggedIn});
+//   } else {
+//     res.sendStatus(404);
+//   }
+// }));
 
 /* Update an message. */
 router.post('/:id/edit', asyncHandler(async (req, res) => {
-  const loggedIn = await checkForLoggedInState(req);
-  if (loggedIn) {
+  const user = await checkForLoggedInState(req);
+  if (user.adminPermissions) {
     let message;
     try {
       message = await Message.findByPk(req.params.id);

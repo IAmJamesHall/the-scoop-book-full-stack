@@ -1,5 +1,6 @@
 extends ../layout
 
+
 block content
   h2= title
   
@@ -7,3 +8,9 @@ block content
   
   form(action="/messages", method="post")
     include form
+  #editor
+  script
+    include ../../public/javascripts/quill.js
+
+
+
