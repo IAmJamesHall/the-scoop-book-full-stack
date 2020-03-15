@@ -10,11 +10,15 @@ This app also supports receiving messages from certain pre-approved phone number
 - [x] publish to Github
 - [x] add more obvious delete button
 - [ ] add friendly 404, errors
-- [ ] add today indicator
+- [ ] add today indicator?
 - [ ] add formatting support
 - [x] implement redirects when not logged in
+- [ ] expiration date for messages
+  - [ ] should I show how long a message has left
+- [ ] search for archived messages
 
 
 # TODO sometime in future
 - [ ] add desktop/mobile notifications
 - [ ] admins can add new phone # to database
+- [ ] initial messages
