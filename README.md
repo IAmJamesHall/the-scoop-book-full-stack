@@ -13,7 +13,7 @@ This app also supports receiving messages from certain pre-approved phone number
 - [ ] add today indicator?
 - [ ] add formatting support
 - [x] implement redirects when not logged in
-- [ ] expiration date for messages
+- [x] expiration date for messages
   - [ ] should I show how long a message has left
 - [ ] search for archived messages
 

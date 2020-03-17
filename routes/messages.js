@@ -1,99 +1,31 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
-const { Message, User, Phone } = require('../models');
-
-
-/* Handler function to wrap each route. */
-function asyncHandler(cb) {
-  return async (req, res, next) => {
-    try {
-      await cb(req, res, next)
-    } catch (error) {
-      console.log(error);
-      res.status(500).send(error);
-    }
-  }
-}
-
-/**
- * 
- * @param {object} req - HTTP request object
- * @return {object} 
- *       - username
- *       - loggedIn
-*        - adminPermission
- */
-async function checkForLoggedInState(req) {
-  const { username } = req.cookies;
-  let user;
-  let loggedIn = false;
-  if (username) {
-    user = await User.findOne({
-      where: { username }
-    });
-  }
-  if (user) {
-    loggedIn = true;
-    user = user.toJSON();;
-    return {
-      loggedIn,
-      username: user.username,
-      adminPermissions: user.adminPermissions
-    }
-  } else {
-    return {
-      loggedIn: false,
-      username: null,
-      adminPermission: false
-    }
-  }
-
-}
-
-async function getUser(req) {
-  const { username } = req.cookies;
-  let foundUser = await User.findOne({
-    attributes: ['fullname'],
-    where: { username }
-  });
-  foundUser = foundUser.toJSON();
-  return foundUser.fullname;
-}
+const { Message} = require('../models');
+const {
+        asyncHandler, 
+        getUser, 
+        getPhone, 
+        deleteOutdatedMessages,
+        replaceLineBreaks
+      } = require('../bin/helpers');
 
 
 
-async function getPhone(phone) {
-  let foundPhone = await Phone.findOne({
-    attributes: ['name'],
-    where: { phone }
-  })
-  return (foundPhone ? foundPhone.toJSON().name : false)
-}
-
-
-async function deleteOutdatedMessages() {
-  const messages = await Message.findAll();
-  const messagesJSON = messages.map(message => message.toJSON());
-  for (let i = 0; i < messagesJSON.length; i++) {
-    const messageDeleteTime = new Date(messages[i].deleteAt);
-    const now = new Date();
-    if (messages[i].deleteAt != null) {
-      if (messageDeleteTime < now) {
-        await messages[i].destroy();
-      }
-    }
-  }
-}
 
 /* GET messages listing. */
 router.get('/', asyncHandler(async (req, res) => {
   await deleteOutdatedMessages();
-  const user = await checkForLoggedInState(req);
+  const user = await getUser(req);
   let fullName;
   if (user.loggedIn) {
-    fullName = await getUser(req);
+    fullName = user.username; // TODO: replace with fullname
     const messages = await Message.findAll({ order: [["createdAt", "DESC"]] });
+    messages.forEach((message) => {
+      message.content = replaceLineBreaks(message.content);
+    })
+    console.log(messages);
+
     res.render("messages/index", { messages, title: "The Scoop Book", fullName, user });
   } else {
     res.redirect('/auth/login');
@@ -103,7 +35,7 @@ router.get('/', asyncHandler(async (req, res) => {
 
 /* Create a new message form. */
 router.get('/new', async (req, res) => {
-  const user = await checkForLoggedInState(req);
+  const user = await getUser(req);
   if (user.adminPermissions) {
     res.render("messages/new", { message: {}, title: "New Message", loggedIn: user.loggedIn });
   } else {
@@ -114,7 +46,7 @@ router.get('/new', async (req, res) => {
 
 /* POST create message. */
 router.post('/', asyncHandler(async (req, res) => {
-  const user = await checkForLoggedInState(req);
+  const user = await getUser(req);
   if (user.adminPermissions) {
     let message;
     let date = req.body.time.split('.');
@@ -221,7 +153,7 @@ router.post('/sms', asyncHandler( async (req, res) => {
 
 /* Update an message. */
 router.post('/:id/edit', asyncHandler(async (req, res) => {
-  const user = await checkForLoggedInState(req);
+  const user = await getUser(req);
   if (user.adminPermissions) {
     let message;
     try {
@@ -254,7 +186,7 @@ router.post('/:id/edit', asyncHandler(async (req, res) => {
 
 /* Delete message form. */
 router.get("/:id/delete", asyncHandler(async (req, res) => {
-  const loggedIn = await checkForLoggedInState(req);
+  const loggedIn = await getUser(req);
   if (loggedIn) {
     const message = await Message.findByPk(req.params.id);
     if (message) {
@@ -269,7 +201,7 @@ router.get("/:id/delete", asyncHandler(async (req, res) => {
 
 /* Delete individual message. */
 router.post('/:id/delete', asyncHandler(async (req, res) => {
-  const loggedIn = await checkForLoggedInState(req);
+  const loggedIn = await getUser(req);
   if (loggedIn) {
     const message = await Message.findByPk(req.params.id);
     if (message) {

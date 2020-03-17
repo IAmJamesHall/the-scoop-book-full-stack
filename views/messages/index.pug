@@ -14,7 +14,7 @@ block content
   each message in messages
     if user.adminPermissions
       article
-        p= message.content
+        p !{message.content}
         include by_line
     else
       article
