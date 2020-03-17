@@ -1,6 +1,10 @@
 extends layout
 
 block content
+  p 
+    a(href="/messages")
+      i.fa.fa-arrow-left
+      |  Go back
   h1= message
   h2= error.status
   pre #{error.stack}
