@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 const { Message, User, Phone } = require('../models');
 
 
@@ -21,7 +22,7 @@ function asyncHandler(cb) {
  * @return {object} 
  *       - username
  *       - loggedIn
-*        -  adminPermission
+*        - adminPermission
  */
 async function checkForLoggedInState(req) {
   const { username } = req.cookies;
@@ -70,8 +71,24 @@ async function getPhone(phone) {
   return (foundPhone ? foundPhone.toJSON().name : false)
 }
 
+
+async function deleteOutdatedMessages() {
+  const messages = await Message.findAll();
+  const messagesJSON = messages.map(message => message.toJSON());
+  for (let i = 0; i < messagesJSON.length; i++) {
+    const messageDeleteTime = new Date(messages[i].deleteAt);
+    const now = new Date();
+    if (messages[i].deleteAt != null) {
+      if (messageDeleteTime < now) {
+        await messages[i].destroy();
+      }
+    }
+  }
+}
+
 /* GET messages listing. */
 router.get('/', asyncHandler(async (req, res) => {
+  await deleteOutdatedMessages();
   const user = await checkForLoggedInState(req);
   let fullName;
   if (user.loggedIn) {
@@ -100,12 +117,26 @@ router.post('/', asyncHandler(async (req, res) => {
   const user = await checkForLoggedInState(req);
   if (user.adminPermissions) {
     let message;
+    let date = req.body.time.split('.');
+    let deleteAt;
+    if (date === null) {
+      deleteAt = null;
+    } else {
+      deleteAt = moment().add(date[0], date[1]).endOf('day').toString();
+    }
+    
     try {
-      message = await Message.create(req.body);
+      messageObject = {
+        content: req.body.content,
+        author: req.body.author,
+        deleteAt
+      }
+
+      message = await Message.create(messageObject);
       res.redirect("/messages");
     } catch (error) {
       if (error.name === "SequelizeValidationError") {
-        message = await Message.build(req.body);
+        message = await Message.build(messageObject);
         res.render("messages/new", { message, errors: error.errors, title: "New Message", loggedIn })
       } else {
         throw error; //error caught in the asyncHandler's catch block
@@ -143,20 +174,23 @@ router.post('/', asyncHandler(async (req, res) => {
 
 // POST a message by SMS
 router.post('/sms', asyncHandler( async (req, res) => {
-
   const content = req.body.Body;
   const phone = req.body.From;
   const author = await getPhone(phone);
+  const deleteAt = moment().add(2, 'days').format();
   console.log('phone: ', phone)
   console.log('author: ', author);
+  console.log('deleteAt: ', deleteAt);
   if (author) {
     const message = await Message.create({
       content,
-      author
+      author,
+      deleteAt
     });
     res.status(200).send('Message added to the database');
   }
 }));
+
 
 // /* Edit message form. */
 // router.get("/:id/edit", asyncHandler(async (req, res) => {

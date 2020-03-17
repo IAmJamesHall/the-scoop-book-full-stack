@@ -19,7 +19,12 @@ module.exports = (sequelize) => {
             }
         },
         author: Sequelize.STRING,
-    }, { sequelize });
+        deleteAt: Sequelize.DATE
+    }, { 
+          sequelize,
+          paranoid: true,
+          timestamps: true
+      });
 
     return Message;
 }
