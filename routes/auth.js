@@ -1,18 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models').User;
+const { User } = require('../models');
 
-/* Handler function to wrap each route. */
-function asyncHandler(cb){
-    return async(req, res, next) => {
-      try {
-        await cb(req, res, next)
-      } catch(error){
-        console.log(error);
-        res.status(500).send(error);
-      }
-    }
-  }
+
+const { asyncHandler } = require('../bin/helpers');
+
+  // POST new user
+  
+  // GET currently authenticated user
+
+  // check credentials 
+
 
   /* Create login form */
   router.get('/', asyncHandler(async (req, res) => {
@@ -47,5 +45,8 @@ function asyncHandler(cb){
     }
 
   }));
+
+
+
 
   module.exports = router;

@@ -12,6 +12,16 @@ const {
 
 
 
+// GET messages listing
+router.get('/', asyncHandler(async (req, res) => {
+  await deleteOutdatedMessages();
+}))
+
+// POST new message
+
+// POST new message by SMS
+
+// DELETE message
 
 /* GET messages listing. */
 router.get('/', asyncHandler(async (req, res) => {
@@ -151,7 +161,7 @@ router.post('/sms', asyncHandler( async (req, res) => {
 //   }
 // }));
 
-/* Update an message. */
+/* Update a message. */
 router.post('/:id/edit', asyncHandler(async (req, res) => {
   const user = await getUser(req);
   if (user.adminPermissions) {

@@ -8,6 +8,8 @@ const routes = require('./routes/index');
 const messages = require('./routes/messages');
 const auth = require('./routes/auth');
 
+const { asyncHandler } = require('util/helpers');
+
 const app = express();
 
 // view engine setup
@@ -28,6 +30,12 @@ app.use('/auth', auth);
 app.use((req, res, next) => {
   next(createError(404));
 });
+
+app.use(asyncHandler( async(req, res, next) => {
+  const authenticateUser = require('util/authenticateUser');
+  await authenticateUser();
+  next();
+}));
 
 // error handler
 app.use((err, req, res, next) => {
