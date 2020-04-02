@@ -20,7 +20,10 @@ module.exports = (sequelize) => {
         }
       }
     }
-  }, { sequelize });
+  }, { 
+    timestamps: false,
+    sequelize 
+  });
 
   return Phone;
-}
+} 

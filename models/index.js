@@ -31,6 +31,13 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
+
+// DB associations
+db.Phone.hasMany(db.Message);
+db.Message.belongsTo(db.Phone);
+
+
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

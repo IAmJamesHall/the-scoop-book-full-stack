@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
-const { Message} = require('../models');
+const { Message, Phone } = require('../models');
 const {
         asyncHandler, 
         getUser, 
@@ -20,11 +20,24 @@ router.get('/', asyncHandler(async (req, res) => {
   let fullName;
   if (user.loggedIn) {
     fullName = user.username; // TODO: replace with fullname
-    const messages = await Message.findAll({ order: [["createdAt", "DESC"]] });
+    const messages = await Message.findAll({ 
+      order: [["createdAt", "DESC"]],
+      include: {
+        model: Phone
+      },
+
+    });
     messages.forEach((message) => {
       message.content = replaceLineBreaks(message.content);
+      if (message.Phone) {
+        message.author = message.Phone.name;
+      } else {
+        message.author = "admin";
+      }
     })
-    console.log(messages);
+
+
+    
 
     res.render("messages/index", { messages, title: "The Scoop Book", fullName, user });
   } else {

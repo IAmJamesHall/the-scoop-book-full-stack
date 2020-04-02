@@ -18,7 +18,7 @@ module.exports = (sequelize) => {
                 }
             }
         },
-        author: Sequelize.STRING,
+        phoneId: Sequelize.INTEGER,
         deleteAt: Sequelize.DATE
     }, { 
           sequelize,

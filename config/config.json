@@ -8,7 +8,6 @@
     "storage": "test.db"
   },
   "production": {
-    "dialect": "sqlite",
-    "storage": "production.db"
+    "use_env_variable": "DATABASE_URL"
   }
 }
