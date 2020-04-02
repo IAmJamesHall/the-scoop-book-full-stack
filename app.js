@@ -7,8 +7,9 @@ const logger = require('morgan');
 const routes = require('./routes/index');
 const messages = require('./routes/messages');
 const auth = require('./routes/auth');
+const phones = require('./routes/phones');
 
-const { asyncHandler } = require('util/helpers');
+const { asyncHandler } = require('./bin/helpers');
 
 const app = express();
 
@@ -22,20 +23,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const authenticateUser = require('./bin/authenticateUser');
+app.use(authenticateUser());
+
 app.use('/', routes);
 app.use('/messages', messages);
 app.use('/auth', auth);
+app.use('/phones', phones);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
   next(createError(404));
 });
 
-app.use(asyncHandler( async(req, res, next) => {
-  const authenticateUser = require('util/authenticateUser');
-  await authenticateUser();
-  next();
-}));
+
 
 // error handler
 app.use((err, req, res, next) => {

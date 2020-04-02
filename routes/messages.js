@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
-const { Message} = require('../models');
+const { Message, Phone } = require('../models');
 const {
         asyncHandler, 
         getUser, 
@@ -16,7 +16,8 @@ const {
 router.get('/', asyncHandler(async (req, res) => {
   await deleteOutdatedMessages();
   const messages = await Message.findAll({
-    order: [["createdAt", "DESC"]]
+    order: [["createdAt", "DESC"]],
+    include: Phone
   });
 
   // replace line break characters

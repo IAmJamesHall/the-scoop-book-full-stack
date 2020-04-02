@@ -5,10 +5,11 @@ module.exports = (sequelize) => {
   class User extends Sequelize.Model { }
   User.init({
     id: {
-      type: DataTypes.INTEGER,
+      type: Sequelize.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
+    authorId: Sequelize.INTEGER,
     username: {
       type: Sequelize.STRING,
       validate: {

@@ -22,3 +22,4 @@ This app also supports receiving messages from certain pre-approved phone number
 - [ ] add desktop/mobile notifications
 - [ ] admins can add new phone # to database
 - [ ] initial messages
+- [ ] add storeId

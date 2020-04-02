@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 
 function authenticateUser() {
   return async (req, res, next) => {
+    console.log('AUTHENTICATING')
     const auth = require('basic-auth');
     const authUser = auth(req);
     // normalize attributes 
@@ -39,7 +40,7 @@ function authenticateUser() {
         }
       } else { //email address not present in auth headers
         res.locals.user = false;
-        next();
+        res.status(401).end();
       }
     } else { //auth headers not present
       res.status(401).end();

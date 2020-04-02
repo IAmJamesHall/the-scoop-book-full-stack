@@ -47,5 +47,4 @@ function replaceLineBreaks(message) {
 exports.asyncHandler = asyncHandler;
 exports.deleteOutdatedMessages = deleteOutdatedMessages;
 exports.getPhone = getPhone;
-exports.getUser = getUser;
 exports.replaceLineBreaks = replaceLineBreaks;

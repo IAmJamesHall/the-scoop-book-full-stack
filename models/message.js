@@ -18,7 +18,6 @@ module.exports = (sequelize) => {
                 }
             }
         },
-        author: Sequelize.STRING,
         deleteAt: Sequelize.DATE
     }, { 
           sequelize,
