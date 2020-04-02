@@ -12,41 +12,6 @@ function asyncHandler(cb) {
   }
 }
 
-/**
- * 
- * @param {object} req - HTTP request object
- * @return {object} 
- *       - username
- *       - loggedIn
-*        - adminPermission
- */
-async function getUser(req) {
-  const { username } = req.cookies;
-  let user;
-  let loggedIn = false;
-  if (username) {
-    user = await User.findOne({
-      where: { username }
-    });
-  }
-  if (user) {
-    loggedIn = true;
-    user = user.toJSON();;
-    return {
-      loggedIn,
-      username: user.username,
-      adminPermissions: user.adminPermissions
-    }
-  } else {
-    return {
-      loggedIn: false,
-      username: null,
-      adminPermission: false
-    }
-  }
-
-}
-
 
 
 async function getPhone(phone) {

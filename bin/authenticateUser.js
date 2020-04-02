@@ -25,7 +25,9 @@ function authenticateUser() {
             if (result) { // if password is correct
               res.locals.user = {
                 username: foundUser.username,
-                userId: foundUser.id
+                fullName: foundUser.fullName,
+                userId: foundUser.id,
+                adminPermissions: foundUser.adminPermissions
               };
               next();
             } else { //password is incorrect
