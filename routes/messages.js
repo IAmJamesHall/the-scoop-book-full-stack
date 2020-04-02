@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const moment = require('moment');
+const { Op } = require('sequelize');
 const { Message, Phone } = require('../models');
 const {
         asyncHandler, 
@@ -12,13 +13,35 @@ const {
 
 
 
-// GET messages listing
+// GET messages listing (with optional search)
 router.get('/', asyncHandler(async (req, res) => {
   await deleteOutdatedMessages();
-  const messages = await Message.findAll({
-    order: [["createdAt", "DESC"]],
-    include: Phone
-  });
+  let query;
+  if (req.body.query) { //if search query is present
+    const messages = await Message.findAll({
+      order: [["createdAt", "DESC"]],
+      include: Phone,
+      where: {
+        content: {
+          [Op.like]: query
+        }
+      }
+    });
+  } else {
+    const messages = await Message.findAll({
+      order: [["createdAt", "DESC"]],
+      include: Phone,
+    });
+  }
+
+  // if no messages found
+  if (!messages) {
+    res.json({
+      messages: null,
+      user: res.locals.user
+    })
+  }
+  
 
   // replace line break characters
   messages.forEach(message => {
@@ -39,7 +62,7 @@ router.post('/', asyncHandler(async (req, res) => {
     let date = req.body.time.split('.');
     let deleteAt;
     if (date === null) {
-      deleteAt = null;
+      deleteAt = null; 
     } else {
       deleteAt = moment().add(date[0], date[1]).endOf('day').toString();
     }
